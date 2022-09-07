@@ -1,10 +1,7 @@
 package com.codeup;
 
 import data.Post;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,5 +34,19 @@ public class PostsController {
                     throw new RuntimeException("Simulation Glitch: source not found");
         };
     }
+
+    // US2-A: Make createPost() & use @PostMapping to allow POST requests/responses to be handled in PostsController
+    @PostMapping
+    private void createPost(@RequestBody Post createPost) {
+        System.out.println(createPost);
+    }
+
+    // US3-A: Make updatePost() & use @PutMapping to allow PUT requests/responses to be handled in PostsController
+    @PutMapping("{id}")
+    private void updatePost(@PathVariable Long id, @RequestBody Post post) {}
+
+    // US4-A: Make deletePost() & @DeleteMapping to allow DELETE requests/responses to be handled in PostsController
+    @DeleteMapping("{id}")
+    private void deletePost(@PathVariable Long id) {}
 }
 
