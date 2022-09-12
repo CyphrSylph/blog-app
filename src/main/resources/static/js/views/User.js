@@ -26,7 +26,7 @@ export default function prepareUserHTML(props) {
     `;
 }
 
-
+// US6-E: Implement the client-side ability to update the user's password
 export function prepareUserJS() {
 	submitPasswordHandler();
 	togglePasswordHandler();
