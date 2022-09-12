@@ -94,7 +94,7 @@ public class PostsController {
             return;
         }
         // Respond with error if matching post NOT found
-        throw new RuntimeException("Post not found");
+        throw new RuntimeException("Simulation Glitch: source not found");
     }
 }
 
