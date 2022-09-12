@@ -25,6 +25,7 @@ export default function Register(props) {
 `;
 }
 
+// US5-C: Register the User Client-Side
 export function RegisterEvent(){
    const registerBTN = document.querySelector("#register-btn");
    registerBTN.addEventListener("click", function (e) {
@@ -45,7 +46,7 @@ export function RegisterEvent(){
             body: JSON.stringify(newUser)
         }
 
-        fetch("http://localhost:8089/api/users" + "/create", request)
+        fetch(USER_API_BASE_URL + "/create", request)
             .then(response => {
                 console.log(response.status);
                 CreateView("/");

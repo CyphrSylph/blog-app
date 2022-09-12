@@ -18,6 +18,7 @@ public class UsersController {
     private List<User> users = new ArrayList<>();
     private long nextID = 1;
 
+    // US6-A: Make getAll and getById in UsersController
     @GetMapping
     public List<User> fetchUsers() { return users; }
 
@@ -33,7 +34,6 @@ public class UsersController {
         // Return matching user if found
         return user;
     }
-
     private User findUserByID(long id) {
         // For every user in the list of users
         for (User user: users) {
@@ -43,11 +43,62 @@ public class UsersController {
                 return user;
             }
         }
-        // Return null if NOT match not found
+        // Return null if match NOT found
         return null;
     }
 
-    @PostMapping
+    // US6-B: Make getByUsername and getByEmail
+    @GetMapping("/username/{username}")
+    private User fetchByUsername(@PathVariable String username) {
+        // Search list of users and return matching user based on username
+        User user = findByUsername(username);
+        // If matching username NOT found [equals null]
+        if(user == null) {
+            // Respond with error
+            throw new RuntimeException("Simulation Glitch: user not found");
+        }
+        // Return matching user if found
+        return user;
+    }
+    private User findByUsername(String username) {
+        // For every user in the list of users
+        for(User user: users) {
+            // Compare username
+            if(user.getUsername().equals(username)) {
+                // Return user if match found
+                return user;
+            }
+        }
+        // Return null if match NOT found
+        return null;
+    }
+
+    @GetMapping("/email/{email}")
+    private User fetchByEmail(@PathVariable String email) {
+        // Search list of users and return matching user based on email
+        User user = findByEmail(email);
+        // If matching email NOT found [equals null]
+        if(user == null) {
+            // Respond with error
+            throw new RuntimeException("Simulation Glitch: user not found");
+        }
+        // Return matching user if found
+        return user;
+    }
+    private User findByEmail(String email) {
+        // For every user in the list of users
+        for(User user: users) {
+            // Compare email
+            if(user.getUsername().equals(email)) {
+                // Return user if match found
+                return user;
+            }
+        }
+        // Return null if match NOT found
+        return null;
+    }
+
+    @PostMapping("/create")
     private void createUser(@RequestBody User newUser) {
         // Set and increment ID for new user
         newUser.setId(nextID);
