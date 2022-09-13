@@ -1,9 +1,9 @@
 package com.codeup;
 
+import data.Category;
 import data.Post;
 import data.User;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +58,16 @@ public class PostsController {
         defaultAuthor.setUsername("Default Author");
         defaultAuthor.setEmail("defaultAuthor@glitch.com");
         newPost.setAuthor(defaultAuthor);
+        // Create new category object
+        Category cat1 = new Category(1L,"CategoryA",null);
+        Category cat2 = new Category(2L,"CategoryB",null);
+        Category cat3 = new Category(3L,"CategoryA",null);
+        // Set category to new post
+        newPost.setCategories(new ArrayList<>());
+        // Add category to new post
+        newPost.getCategories().add(cat1);
+        newPost.getCategories().add(cat2);
+        newPost.getCategories().add(cat3);
         // Increment ID for new post
         nextID++;
         // Add new post to list of posts
