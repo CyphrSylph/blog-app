@@ -2,8 +2,8 @@ package data;
 import lombok.*;
 import javax.management.relation.Role;
 import java.time.LocalDate;
+import java.util.Collection;
 
-// US5-A: Implement the User class
 
 // Empty constructor
 @NoArgsConstructor
@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 
+// US5-A: Implement the User class
 public class User {
     // Private fields for User
     private long id;
@@ -22,4 +23,6 @@ public class User {
     private String password;
     private LocalDate createdAt;
     private UserRole role;
+    // US7: As a user, I can see the author of blog posts
+    private Collection<Post> posts;
 }

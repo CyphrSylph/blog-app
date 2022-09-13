@@ -1,6 +1,7 @@
 package com.codeup;
 
 import data.Post;
+import data.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -49,8 +50,15 @@ public class PostsController {
     // US2-A: Make createPost() & use @PostMapping to allow POST requests/responses to be handled in PostsController
     @PostMapping
     private void createPost(@RequestBody Post newPost) {
-        // Set and increment ID for new post
+        // Set ID for new post
         newPost.setId(nextID);
+        // Use default author for new post
+        User defaultAuthor = new User();
+        defaultAuthor.setId(3);
+        defaultAuthor.setUsername("Default Author");
+        defaultAuthor.setEmail("defaultAuthor@glitch.com");
+        newPost.setAuthor(defaultAuthor);
+        // Increment ID for new post
         nextID++;
         // Add new post to list of posts
         posts.add(newPost);

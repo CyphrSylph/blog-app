@@ -129,30 +129,41 @@ function deletePost(postID) {
 
 function submitHandler() {
     // Target save button
-    const saveBtn = document.querySelector("#submitPost");
-    saveBtn.addEventListener("click", function (e) {
-        // Get title and content for new/updated post
+    const submitBtn = document.querySelector("#submitPost");
+    submitBtn.addEventListener("click", function (e) {
         const postID = parseInt(this.getAttribute("data-id"));
-        // Create new/updated post object
-        const post = {
-            title: titleField.value,
-            content: contentFeild.value
-        }
-        // Create request
-        const request = {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(post)
-        }
-        let url = "http://localhost:8089/api/posts";
-        // Change the request and url if updating post
-        if(postID > 0) {
-            request.method = "PUT";
-            url += `/${postID}`;
-        }
-        fetch(url, request)
-            .then(function(response) {
-                CreateView("/posts");
-            })
+        submitPost(postID);
     });
+}
+
+function submitPost(postID) {
+    // Get title and content for new/updated post
+    const titleField = document.querySelector("#title");
+    const contentField = document.querySelector("#content");
+    // Create new/updated post object
+    const post = {
+        title: titleField.value,
+        content: contentField.value
+    }
+    // Create request
+    const request = {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(post)
+    }
+    let url = POST_API_BASE_URL;
+    // Change the request and url if updating post
+    if(postID > 0) {
+        request.method = "PUT";
+        url += `/${postID}`;
+    }
+    fetch(url, request)
+        .then(function(response) {
+           if(response.status !== 200) {
+               console.log("Simulation Glitch: stale fetch")
+               console.log(response.statusText);
+               return;
+        }
+        CreateView("/posts");
+    })
 }

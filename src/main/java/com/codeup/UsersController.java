@@ -1,14 +1,15 @@
 // US5-B: Implement the UsersController
 package com.codeup;
 
-import data.Post;
 import data.User;
 import data.UserRole;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
@@ -150,7 +151,8 @@ public class UsersController {
     private void updatePassword(@PathVariable Long id, @RequestParam(required = false) String oldPassword, @Valid @Size(min = 3) @RequestParam String newPassword) {
         User user = findByID(id);
         if(user == null) {
-            throw new RuntimeException("Simulation Glitch: user not found");
+            // Use ResponseStatusException instead of RuntimeException
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: user not found");
         }
         // Compare old password with saved password
         if(!user.getPassword().equals(oldPassword)) {
@@ -158,7 +160,7 @@ public class UsersController {
         }
         // Validate new password based on minimum length
         if(newPassword.length() < 3) {
-            throw new RuntimeException("Simulation Glitch: minimum password length is 3 characters");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Simulation Glitch: minimum password length is 3 characters");
         }
         user.setPassword(newPassword);
     }
