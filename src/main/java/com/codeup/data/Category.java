@@ -1,8 +1,7 @@
-package data;
+package com.codeup.data;
 import lombok.*;
 
 import java.util.Collection;
-import java.util.Collections;
 
 // Empty constructor
 @NoArgsConstructor

@@ -1,15 +1,13 @@
 package com.codeup;
 
-import data.Category;
-import data.Post;
-import data.User;
+import com.codeup.data.Category;
+import com.codeup.data.Post;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // US9-C, US10-C: Create the CategoriesController
 @RestController

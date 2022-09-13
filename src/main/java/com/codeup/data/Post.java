@@ -1,4 +1,4 @@
-package data;
+package com.codeup.data;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,6 +1,6 @@
-package data;
+package com.codeup.data;
 import lombok.*;
-import javax.management.relation.Role;
+
 import java.time.LocalDate;
 import java.util.Collection;
 

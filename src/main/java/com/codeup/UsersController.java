@@ -1,8 +1,7 @@
 // US5-B: Implement the UsersController
 package com.codeup;
 
-import data.User;
-import data.UserRole;
+import com.codeup.data.User;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
