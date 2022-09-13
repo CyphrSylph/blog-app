@@ -35,16 +35,30 @@ function generatePostsHTML(posts) {
         <tr>
             <th scope = "col"> Title </th>
             <th scope = "col"> Content </th>
+            <th scope="col">Categories</th>
+            <th scope="col">Author</th>
         </tr>
         </thead>
         <tbody>
     `;
+
     for(let i = 0; i < posts.length; i++) {
         const post = posts[i];
+
+        let categories = '';
+        for (let j = 0; j < post.categories.length; j++) {
+            if(categories !== "") {
+                categories += ", ";
+            }
+            categories += post.categories[j].name;
+        }
+
         postsHTML += `
         <tr>
         <td>${post.title}</td>
         <td>${post.content}</td>
+        <td>${categories}</td>
+        <td>${post.author.username}</td>
         <td><button data-id = ${post.id} class = "button btn-primary editPost">Edit</button></td>
         <td><button data-id = ${post.id} class = "button btn-danger deletePost">Delete</button></td>
         </tr>
@@ -120,9 +134,14 @@ function deletePost(postID) {
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
     }
-    const url = "http://localhost:8081/api/posts/" + postID;
+    const url = POST_API_BASE_URL + `/${postID}`;
     fetch(url, request)
         .then(function(response) {
+            if(response.status !== 200) {
+                console.log("fetch returned bad status code: " + response.status);
+                console.log(response.statusText);
+                return;
+            }
             CreateView("/posts");
         })
 }
