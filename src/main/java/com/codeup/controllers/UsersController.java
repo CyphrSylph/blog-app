@@ -1,5 +1,5 @@
 // US5-B: Implement the UsersController
-package com.codeup;
+package com.codeup.controllers;
 
 import com.codeup.data.User;
 
@@ -97,7 +97,7 @@ public class UsersController {
         // For every user in the list of users
         for(User user: users) {
             // Compare email
-            if(user.getUsername().equals(email)) {
+            if(user.getEmail().equals(email)) {
                 // Return user if match found
                 return user;
             }
@@ -116,32 +116,22 @@ public class UsersController {
     }
 
     @PutMapping("/{id}")
-    private void updateUser(@RequestBody User updatedUser, @PathVariable Long id) {
+    public void updateUser(@RequestBody User updatedUser, @PathVariable Long id) {
         // Search list of users and delete matching user based on ID
         User user = findByID(id);
         // If matching user NOT found [equals null]
         if(user == null) {
             System.out.println("Simulation Glitch: user not found");
         } else {
-            // If matching username found [does NOT equal null]
-            if(updatedUser.getUsername() != null) {
-                // Update username
-                user.setUsername(updatedUser.getUsername());
-            }
             // If matching email found [does NOT equal null]
             if(updatedUser.getEmail() != null) {
                 // Update email
                 user.setEmail(updatedUser.getEmail());
             }
-            // If matching password found [does NOT equal null]
-            if(updatedUser.getPassword() != null) {
-                // Update password
-                user.setPassword(updatedUser.getPassword());
-            }
-            // Return updated user
+            // Return email if found
             return;
         }
-        // Respond with error
+        // Respond with error if NOT found
         throw new RuntimeException("Simulation Glitch: user not found");
     }
 
@@ -165,7 +155,7 @@ public class UsersController {
     }
 
     @DeleteMapping("/{id}")
-    private void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable Long id) {
         // Search list of users and delete matching user based on ID
         User user = findByID(id);
         // If matching user found [does NOT equal null]

@@ -1,6 +1,6 @@
 package com.codeup.data;
-import lombok.*;
 
+import lombok.*;
 import java.util.Collection;
 
 // Empty constructor

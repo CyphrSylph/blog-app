@@ -1,4 +1,4 @@
-package com.codeup;
+package com.codeup.controllers;
 
 import com.codeup.data.Category;
 import com.codeup.data.Post;
