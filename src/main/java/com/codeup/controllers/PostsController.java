@@ -1,23 +1,32 @@
 package com.codeup.controllers;
 
+import com.codeup.data.Category;
 import com.codeup.data.Post;
+import com.codeup.data.User;
+import com.codeup.repositories.CategoryRepository;
 import com.codeup.repositories.PostRepository;
+import com.codeup.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
+// Inject class dependencies vs instantiating them manually:
+// Spring automatically creates the repository instance and INJECTS it into the controller via its constructor.
 @RestController
-@RequestMapping(value = "/api/posts", headers = "Accept=application/json")
+@RequestMapping(value = "/api/posts", produces = "application/json")
 public class PostsController {
 
+    // Instance variable to receive repository instance
     private PostRepository postRepository;
-
-    public PostsController(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
+    private UserRepository userRepository;
+    private CategoryRepository categoryRepository;
 
     @GetMapping
+    // postRepository is an instance variable and can be used by any controller method
     public List<Post> fetchPosts() {
         return postRepository.findAll();
     }
@@ -29,6 +38,21 @@ public class PostsController {
 
     @PostMapping("")
     public void createPost(@RequestBody Post newPost) {
+
+        // Set default author for new post
+        User author = userRepository.findById(1L).get();
+        newPost.setAuthor(author);
+        // Create new category objects
+        Category cat1 = categoryRepository.findById(1L).get();
+        Category cat2 = categoryRepository.findById(2L).get();
+        Category cat3 = categoryRepository.findById(3L).get();
+        // Set categories to new post
+        newPost.setCategories(new ArrayList<>());
+        // Add categories to new post
+        newPost.getCategories().add(cat1);
+        newPost.getCategories().add(cat2);
+        newPost.getCategories().add(cat3);
+        // Save categories to new post
         postRepository.save(newPost);
     }
 
@@ -47,7 +71,6 @@ public class PostsController {
 
 
 //// PRE-SPRING CONTROLLER METHODS
-//
 //// @RestController registers the class with Spring's Dependency Injector and allows us to signify that a controller exists for the purpose of sending/receiving data
 //@RestController
 //@RequestMapping(value = "/api/posts", headers = "Accept=application/json")

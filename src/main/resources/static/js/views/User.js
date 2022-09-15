@@ -1,5 +1,5 @@
 // US6-C: Create client-side User view
-import CreateView from "../createView"
+import CreateView from "../createView.js"
 
 let prep;
 export default function prepareUserHTML(props) {

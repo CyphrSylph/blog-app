@@ -1,5 +1,5 @@
 package com.codeup.data;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -33,6 +33,7 @@ public class User {
 
     @Email
     @NotEmpty
+    @Column(nullable = false, length = 100)
     private String email;
 
     @ToString.Exclude
@@ -49,6 +50,7 @@ public class User {
     private UserRole role;
 
     // US7: As a user, I can see the author of blog posts
-    @Transient
+    @OneToMany(mappedBy = "author")
+    @JsonIgnoreProperties("author")
     private Collection<Post> posts;
 }
