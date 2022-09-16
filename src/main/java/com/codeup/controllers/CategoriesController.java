@@ -4,10 +4,13 @@ import com.codeup.data.Category;
 import com.codeup.data.Post;
 import com.codeup.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,5 +35,14 @@ public class CategoriesController {
 //        defaultPosts.add(new Post(3L,"C","CCC",null,null));
 //        category.setPosts(defaultPosts);
 //        return category;
+    }
+
+    @GetMapping("/search")
+    private Category fetchCategoryByCategoryName(@RequestParam String categoryName) {
+        Category category = categoryRepository.findByName(categoryName);
+        if(category == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: category not found");
+        }
+        return category;
     }
 }

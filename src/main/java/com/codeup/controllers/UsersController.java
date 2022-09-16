@@ -1,13 +1,16 @@
 package com.codeup.controllers;
 import com.codeup.data.User;
 import com.codeup.repositories.UserRepository;
+import com.codeup.utils.FieldHelper;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
@@ -66,15 +69,36 @@ public class UsersController {
 
     @PutMapping("/{id}")
     public void updateUser(@RequestBody User updatedUser, @PathVariable Long id) {
-        updatedUser.setId(id);
+        // Find selected user by id
+        Optional<User> selectedUser = userRepository.findById(id);
+        // Throw error if selected user is not found
+        if(selectedUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: user not found");
+        }
+        // Pass selected user to original user if found
+        User ogUser = selectedUser.get();
+        // Merge changed data from updated user with original user
+        BeanUtils.copyProperties(updatedUser, ogUser, FieldHelper.getNullPropertyNames(updatedUser));
+        // Set original user with merged data
+        ogUser.setId(id);
+        // Save original user in repository
+        userRepository.save(ogUser);
     }
 
     @PutMapping("/{id}/updatePassword")
     private void updatePassword(@PathVariable Long id, @RequestParam(required = false) String oldPassword, @Valid @Size(min = 3) @RequestParam String newPassword) {
-        User user = userRepository.findById(id).get();
+        // Find selected user by id
+        Optional<User> selectedUser = userRepository.findById(id);
+        // Throw error if selected user not found
+        if(selectedUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: user not found");
+        }
+        User user = selectedUser.get();
+        // Throw error if password does not match
         if(!user.getPassword().equals(oldPassword)) {
             throw new RuntimeException("Simulation Glitch: password mismatch");
         }
+        // Validate the length of the new password
         if(newPassword.length() < 3) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Simulation Glitch: minimum password length is 3 characters");
         }
@@ -84,6 +108,10 @@ public class UsersController {
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
+        Optional<User> selectedUser = userRepository.findById(id);
+        if(selectedUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: user not found");
+        }
         userRepository.deleteById(id);
     }
 

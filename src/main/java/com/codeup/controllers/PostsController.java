@@ -6,8 +6,12 @@ import com.codeup.data.User;
 import com.codeup.repositories.CategoryRepository;
 import com.codeup.repositories.PostRepository;
 import com.codeup.repositories.UserRepository;
+import com.codeup.utils.FieldHelper;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +45,14 @@ public class PostsController {
 
         // Set default author for new post
         User author = userRepository.findById(1L).get();
+        // Set author to new post
         newPost.setAuthor(author);
+        // Set categories to new post
+        newPost.setCategories(new ArrayList<>());
         // Create new category objects
         Category cat1 = categoryRepository.findById(1L).get();
         Category cat2 = categoryRepository.findById(2L).get();
         Category cat3 = categoryRepository.findById(3L).get();
-        // Set categories to new post
-        newPost.setCategories(new ArrayList<>());
         // Add categories to new post
         newPost.getCategories().add(cat1);
         newPost.getCategories().add(cat2);
@@ -58,8 +63,18 @@ public class PostsController {
 
     @PutMapping("/{id}")
     private void updatePost(@RequestBody Post updatedPost, @PathVariable Long id) {
+        // Find selected post by id via postRepository
+        Optional<Post> selectedPost = postRepository.findById(id);
+        // Throw error if the selected post is not found
+        if(selectedPost.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Simulation Glitch: post not found");
+        }
+        // Set post id if selected post is found
         updatedPost.setId(id);
-        postRepository.save(updatedPost);
+        // Copy field values from updatedPost to selectedPost via BeanUtils
+        BeanUtils.copyProperties(updatedPost, selectedPost.get(), FieldHelper.getNullPropertyNames(updatedPost));
+        // Save and update selected post
+        postRepository.save(selectedPost.get());
     }
 
     @DeleteMapping("/{id}")
