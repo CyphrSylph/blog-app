@@ -1,5 +1,6 @@
 package com.codeup.controllers;
 import com.codeup.data.User;
+import com.codeup.data.UserRole;
 import com.codeup.repositories.UserRepository;
 import com.codeup.utils.FieldHelper;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +67,11 @@ public class UsersController {
 
     @PostMapping("/create")
     public void createUser(@RequestBody User newUser) {
+        // Set user role
+        newUser.setRole(UserRole.USER);
+        // Set date user record is created
+        newUser.setCreatedAt(LocalDate.now());
+        // Save user to repository
         userRepository.save(newUser);
     }
 

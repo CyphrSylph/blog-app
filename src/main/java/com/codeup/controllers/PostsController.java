@@ -61,6 +61,8 @@ public class PostsController {
         newPost.getCategories().add(cat3);
         // Save categories to new post
         postRepository.save(newPost);
+        // Send email notification of new post
+        emailService.prepareAndSend(newPost,"Kudos","On the new post");
     }
 
     @PutMapping("/{id}")
