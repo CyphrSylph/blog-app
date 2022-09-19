@@ -6,6 +6,7 @@ import com.codeup.data.User;
 import com.codeup.repositories.CategoryRepository;
 import com.codeup.repositories.PostRepository;
 import com.codeup.repositories.UserRepository;
+import com.codeup.sevices.EmailService;
 import com.codeup.utils.FieldHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +29,7 @@ public class PostsController {
     private PostRepository postRepository;
     private UserRepository userRepository;
     private CategoryRepository categoryRepository;
+    private EmailService emailService;
 
     @GetMapping
     // postRepository is an instance variable and can be used by any controller method
