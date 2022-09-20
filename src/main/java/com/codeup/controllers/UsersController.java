@@ -6,6 +6,7 @@ import com.codeup.utils.FieldHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,6 +26,7 @@ import javax.validation.constraints.Size;
 public class UsersController {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("")
     public List<User> fetchUsers() { return userRepository.findAll(); }
@@ -39,36 +41,16 @@ public class UsersController {
         return userRepository.findById(id);
     }
 
-//    @GetMapping("/username/{username}")
-//    private User fetchByUsername(@PathVariable String username) {
-//        // Search list of users and return matching user based on username
-//        User user = findByUsername(username);
-//        // If matching username NOT found [equals null]
-//        if(user == null) {
-//            // Respond with error
-//            throw new RuntimeException("Simulation Glitch: user not found");
-//        }
-//        // Return matching user if found
-//        return user;
-//    }
-
-//    @GetMapping("/email/{email}")
-//    private User fetchByEmail(@PathVariable String email) {
-//        // Search list of users and return matching user based on email
-//        User user = findByEmail(email);
-//        // If matching email NOT found [equals null]
-//        if(user == null) {
-//            // Respond with error
-//            throw new RuntimeException("Simulation Glitch: user not found");
-//        }
-//        // Return matching user if found
-//        return user;
-//    }
-
     @PostMapping("/create")
     public void createUser(@RequestBody User newUser) {
         // Set user role
         newUser.setRole(UserRole.USER);
+        // Get user entered password
+        String plainTextPassword = newUser.getPassword();
+        // Encrypt password
+        String encryptedPassword = passwordEncoder.encode(plainTextPassword);
+        // Set user password
+        newUser.setPassword(encryptedPassword);
         // Set date user record is created
         newUser.setCreatedAt(LocalDate.now());
         // Save user to repository
