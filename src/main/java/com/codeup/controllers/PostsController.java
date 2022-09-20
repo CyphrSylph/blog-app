@@ -11,6 +11,7 @@ import com.codeup.utils.FieldHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,18 +44,18 @@ public class PostsController {
     }
 
     @PostMapping("")
-    public void createPost(@RequestBody Post newPost) {
-
-        // Set default author for new post
-        User author = userRepository.findById(1L).get();
+    public void createPost(@RequestBody Post newPost, OAuth2Authentication auth) {
+        String username = auth.getName();
+        // Find username for author
+        User author = userRepository.findByUsername(username);
         // Set author to new post
         newPost.setAuthor(author);
         // Set categories to new post
         newPost.setCategories(new ArrayList<>());
         // Create new category objects
-        Category cat1 = categoryRepository.findById(1L).get();
-        Category cat2 = categoryRepository.findById(2L).get();
-        Category cat3 = categoryRepository.findById(3L).get();
+        Category cat1 = categoryRepository.findById(4L).get();
+        Category cat2 = categoryRepository.findById(5L).get();
+        Category cat3 = categoryRepository.findById(6L).get();
         // Add categories to new post
         newPost.getCategories().add(cat1);
         newPost.getCategories().add(cat2);
