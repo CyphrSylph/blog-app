@@ -65,3 +65,51 @@ function setTokens(responseData) {
         console.log("Refresh token set")
     }
 }
+
+// Check for valid user token
+export function getUser() {
+    const accessToken = localStorage.getItem("access_token");
+    if(!accessToken) {
+        return false;
+    }
+    const parts = accessToken.split('.');
+    const payload = parts[1];
+    const decodedPayload = atob(payload);
+    const payloadObject = JSON.parse(decodedPayload);
+    const user = {
+        userName: payloadObject.user_name,
+        role: payloadObject.authorities[0]
+    }
+    return user;
+}
+
+// Check for valid token of user role
+export function getUserRole() {
+    const accessToken = localStorage.getItem("access_token");
+    if(!accessToken) {
+        return false;
+    }
+    const parts = accessToken.split('.');
+    const payload = parts[1];
+    const decodedPayload = atob(payload);
+    const payloadObject = JSON.parse(decodedPayload);
+    return payloadObject.authorities[0];
+}
+
+// Clear stale [invalid] tokens from localStorage
+export async function removeStaleTokens() {
+    console.log("Removing stale tokens...");
+    const request = {
+        method: 'GET',
+        headers: getHeaders()
+    };
+    await fetch(`/api/users/me`, request)
+        .then((response) => {
+            // if fetch error then you might be using stale tokens
+            if (response.status === 401) {
+                window.localStorage.clear();
+            }
+        }).catch(error => {
+            console.log("FETCH ERROR: " + error);
+        });
+}
