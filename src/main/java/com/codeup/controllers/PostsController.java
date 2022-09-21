@@ -11,6 +11,7 @@ import com.codeup.utils.FieldHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,10 +41,15 @@ public class PostsController {
 
     @GetMapping("/{id}")
     public Optional<Post> fetchPostByID(@PathVariable long id){
-        return postRepository.findById(id);
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if(optionalPost.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
+        }
+        return optionalPost;
     }
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
     public void createPost(@RequestBody Post newPost, OAuth2Authentication auth) {
         String username = auth.getName();
         // Find username for author
@@ -84,6 +90,10 @@ public class PostsController {
 
     @DeleteMapping("/{id}")
     private void deletePost(@PathVariable Long id) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if(optionalPost.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
+        }
         postRepository.deleteById(id);
     }
 }

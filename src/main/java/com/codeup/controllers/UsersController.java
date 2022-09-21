@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.naming.AuthenticationException;
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
@@ -32,8 +34,14 @@ public class UsersController {
     public List<User> fetchUsers() { return userRepository.findAll(); }
 
     @GetMapping("/prep")
-    private Optional<User> fetchPrep() {
-        return userRepository.findById(1L);
+    private Optional<User> fetchPrep(OAuth2Authentication auth) {
+        // Throw error if user unauthorized
+        if(auth == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login Required");
+        }
+        String username = auth.getName();
+        User user =userRepository.findByUsername(username);
+        return Optional.of(user);
     }
 
     @GetMapping("/{id}")
@@ -63,7 +71,7 @@ public class UsersController {
         Optional<User> selectedUser = userRepository.findById(id);
         // Throw error if selected user is not found
         if(selectedUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: user not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         // Pass selected user to original user if found
         User ogUser = selectedUser.get();
@@ -81,16 +89,16 @@ public class UsersController {
         Optional<User> selectedUser = userRepository.findById(id);
         // Throw error if selected user not found
         if(selectedUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: user not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         User user = selectedUser.get();
         // Throw error if password does not match
         if(!user.getPassword().equals(oldPassword)) {
-            throw new RuntimeException("Simulation Glitch: password mismatch");
+            throw new RuntimeException("Password mismatch");
         }
         // Validate the length of the new password
         if(newPassword.length() < 3) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Simulation Glitch: minimum password length is 3 characters");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Minimum password length is 3 characters");
         }
         user.setPassword(newPassword);
         userRepository.save(user);
@@ -100,7 +108,7 @@ public class UsersController {
     public void deleteUser(@PathVariable Long id) {
         Optional<User> selectedUser = userRepository.findById(id);
         if(selectedUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simulation Glitch: user not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         userRepository.deleteById(id);
     }

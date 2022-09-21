@@ -4,6 +4,9 @@ import CreateView from "../createView.js"
 let prep;
 export default function prepareUserHTML(props) {
 	prep = props.prep;
+
+	const userPostHTML = createPostHTML(prep);
+
 	return `
         <h1>User Info</h1>
         <h2>${props.prep.username}</h2>
@@ -23,7 +26,42 @@ export default function prepareUserHTML(props) {
             <button id="togglePasswordVisibility" name="togglePasswordVisibility">Show Password?</button>
             <button id="submitPassword" name="submitPassword">Save New Password</button>
         </form>
+        
+        <hr>
+        ${userPostHTML}
     `;
+}
+
+function createPostHTML(user) {
+	let html = `
+		<tbody class = "table">
+		<thead>
+		<tr>
+			<th scope = "col"> Title </th>
+			<th scope = "col"> Content </th>
+		</tr>
+		</thead>
+		<tbody>
+	`;
+
+	// Add a row to the table for each user post
+	if(user.posts) {
+		for(let i = 0; i < user.posts.length; i++) {
+			const post = user.post[i];
+			html += `
+			<tr>
+			<td>${post.title}</td>
+			<td>${post.content}</td>
+			</tr>
+			`;
+		}
+	}
+
+	html += `
+	</tbody>
+	</table>
+	`;
+	return html;
 }
 
 // US6-E: Implement the client-side ability to update the user's password

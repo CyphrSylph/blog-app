@@ -1,6 +1,12 @@
 import CreateView from "../createView.js"
+import createView from "../createView.js";
 
 export default function Register(props) {
+    if(isLoggedIn()) {
+        createView("/");
+        return;
+    }
+
     return `
     <!DOCTYPE html>
         <html>
